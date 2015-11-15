@@ -24,7 +24,7 @@ public class Crime {
     }
 
     public void setTitle(String title) {
-        this.mTitle = title;
+        mTitle = title;
     }
 
     public Date getDate() {
@@ -32,7 +32,7 @@ public class Crime {
     }
 
     public void setDate(Date date) {
-        this.mDate = date;
+        mDate = date;
     }
 
     public boolean isSolved() {
@@ -40,6 +40,11 @@ public class Crime {
     }
 
     public void setSolved(boolean solved) {
-        this.mSolved = solved;
+        mSolved = solved;
+    }
+
+    @Override
+    public String toString() {
+        return mTitle;
     }
 }
