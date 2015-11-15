@@ -1,8 +1,8 @@
 package com.elysium.craig.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class CrimeListFragment extends ListFragment {
 
-    public static final String TAG = "CrimeListFragment";
+    private static final int REQUEST_CRIME = 1;
 
     private ArrayList<Crime> mCrimes;
 
@@ -30,10 +30,25 @@ public class CrimeListFragment extends ListFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         Crime c = ((CrimeAdapter) getListAdapter()).getItem(position);
-        Log.d(TAG, c.getTitle() + " was clicked");
+        Intent i = new Intent(getActivity(), CrimeActivity.class);
+        i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
+        startActivityForResult(i, REQUEST_CRIME);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CRIME) {
+        }
     }
 
     private class CrimeAdapter extends ArrayAdapter<Crime> {
