@@ -10,9 +10,6 @@ import android.support.v4.view.ViewPager;
 import java.util.ArrayList;
 import java.util.UUID;
 
-/**
- * Created by craigwang on 2015/11/16.
- */
 public class CrimePagerActivity extends FragmentActivity {
 
     private ViewPager mViewPager;
