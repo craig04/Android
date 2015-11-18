@@ -51,7 +51,7 @@ public class CrimeFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
-        mCrime = CrimeModel.getsInstance(getActivity()).getCrime(crimeId);
+        mCrime = CrimeLab.getsInstance(getActivity()).getCrime(crimeId);
         setHasOptionsMenu(true);
     }
 
@@ -144,5 +144,11 @@ public class CrimeFragment extends Fragment {
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.getsInstance(getActivity()).saveCrimes();
     }
 }
