@@ -3,9 +3,6 @@ package com.elysium.craig.criminalintent;
 import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 

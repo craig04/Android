@@ -28,7 +28,7 @@ public class CriminalIntentJSONSerializer {
 
     public ArrayList<Crime> loadCrimes() throws IOException, JSONException {
 
-        ArrayList<Crime> crimes = new ArrayList<Crime>();
+        ArrayList<Crime> crimes = new ArrayList<>();
         BufferedReader reader = null;
 
         try {
