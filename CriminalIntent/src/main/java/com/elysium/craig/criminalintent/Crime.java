@@ -101,6 +101,7 @@ public class Crime {
         if (mPhoto != null) {
             json.put(JSON_PHOTO, mPhoto.toJSON());
         }
+        json.put(JSON_SUSPECT, mSuspect);
         return json;
     }
 }
