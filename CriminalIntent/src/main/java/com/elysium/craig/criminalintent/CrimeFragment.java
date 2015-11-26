@@ -2,6 +2,7 @@ package com.elysium.craig.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -54,6 +55,8 @@ public class CrimeFragment extends Fragment {
     private ImageView mPhotoView;
     private Button mSuspectButton;
 
+    private Callbacks mCallbacks;
+
     public static CrimeFragment newInstance(UUID crimeId) {
 
         Bundle args = new Bundle();
@@ -62,6 +65,10 @@ public class CrimeFragment extends Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
     }
 
     @Override
@@ -94,6 +101,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                mCallbacks.onCrimeUpdated(mCrime);
             }
 
             @Override
@@ -120,6 +128,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                mCallbacks.onCrimeUpdated(mCrime);
             }
         });
 
@@ -187,6 +196,18 @@ public class CrimeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        mCallbacks = null;
+        super.onDetach();
+    }
+
     private void showPhoto() {
 
         Photo p = mCrime.getPhoto();
@@ -221,6 +242,7 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data
                 .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            mCallbacks.onCrimeUpdated(mCrime);
             updateDate();
 
         } else if (requestCode == REQUEST_PHOTO) {
@@ -230,6 +252,7 @@ public class CrimeFragment extends Fragment {
             if (filename != null) {
                 Photo p = new Photo(filename);
                 mCrime.setPhoto(p);
+                mCallbacks.onCrimeUpdated(mCrime);
                 showPhoto();
             }
         } else if (requestCode == REQUEST_CONTACT) {
@@ -249,6 +272,7 @@ public class CrimeFragment extends Fragment {
             c.moveToFirst();
             String suspect = c.getString(0);
             mCrime.setSuspect(suspect);
+            mCallbacks.onCrimeUpdated(mCrime);
             mSuspectButton.setText(suspect);
             c.close();
         }

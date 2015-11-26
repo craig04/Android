@@ -1,6 +1,7 @@
 package com.elysium.craig.criminalintent;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +32,12 @@ public class CrimeListFragment extends ListFragment {
     private ArrayList<Crime> mCrimes;
     private boolean mSubtitleVisible;
 
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -43,6 +50,18 @@ public class CrimeListFragment extends ListFragment {
         setHasOptionsMenu(true);
         setRetainInstance(true);
         mSubtitleVisible = false;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        mCallbacks = null;
+        super.onDetach();
     }
 
     @TargetApi(11)
@@ -116,9 +135,7 @@ public class CrimeListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         Crime c = ((CrimeAdapter) getListAdapter()).getItem(position);
-        Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-        i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
-        startActivityForResult(i, REQUEST_CRIME);
+        mCallbacks.onCrimeSelected(c);
     }
 
     @Override
@@ -179,9 +196,8 @@ public class CrimeListFragment extends ListFragment {
         case R.id.menu_item_new_crime:
             Crime crime = new Crime();
             CrimeLab.getsInstance(getActivity()).addCrime(crime);
-            Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-            i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-            startActivityForResult(i, 0);
+            ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
+            mCallbacks.onCrimeSelected(crime);
             return true;
 
         case R.id.menu_item_show_subtitle:
@@ -226,5 +242,9 @@ public class CrimeListFragment extends ListFragment {
 
     private ActionBar getActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    public void updateUI() {
+        ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
     }
 }
