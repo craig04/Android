@@ -1,2 +1,1 @@
-include ':CriminalIntent'
-include ':HelloMoon'
+include ':CriminalIntent', ':NerdLauncher', ':HelloMoon'
