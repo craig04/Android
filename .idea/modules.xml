@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/CriminalIntent/CriminalIntent.iml" filepath="$PROJECT_DIR$/CriminalIntent/CriminalIntent.iml" />
       <module fileurl="file://$PROJECT_DIR$/HelloMoon/HelloMoon.iml" filepath="$PROJECT_DIR$/HelloMoon/HelloMoon.iml" />
       <module fileurl="file://$PROJECT_DIR$/NerdLauncher/NerdLauncher.iml" filepath="$PROJECT_DIR$/NerdLauncher/NerdLauncher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PhotoGallery/PhotoGallery.iml" filepath="$PROJECT_DIR$/PhotoGallery/PhotoGallery.iml" />
       <module fileurl="file://$PROJECT_DIR$/RemoteControl/RemoteControl.iml" filepath="$PROJECT_DIR$/RemoteControl/RemoteControl.iml" />
     </modules>
   </component>
