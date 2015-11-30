@@ -1,6 +1,8 @@
 package com.elysium.craig.photogallery;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,15 +107,30 @@ public class PhotoGalleryFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
+
                 convertView = getActivity().getLayoutInflater()
                     .inflate(R.layout.gallery_item, parent, false);
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent i = new Intent(getActivity(), PhotoActivity.class);
+                        i.putExtra(PhotoFragment.EXTRA_PHOTO,
+                            ((BitmapDrawable) ((ImageView) v).getDrawable()).getBitmap());
+                        startActivity(i);
+                    }
+                });
             }
 
             ImageView imageView = (ImageView) convertView
                 .findViewById(R.id.gallery_item_image_view);
             imageView.setImageResource(R.mipmap.ic_launcher);
             GalleryItem item = getItem(position);
-            mThumbnailThread.queueThumbnail(imageView, item.getUrl());
+
+            Bitmap bitmap = mThumbnailThread.queueThumbnail(imageView, item.getUrl());
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }
 
             return convertView;
         }
