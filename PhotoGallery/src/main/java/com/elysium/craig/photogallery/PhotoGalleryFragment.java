@@ -6,7 +6,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +119,9 @@ public class PhotoGalleryFragment extends Fragment {
                         Intent i = new Intent(getActivity(), PhotoActivity.class);
                         i.putExtra(PhotoFragment.EXTRA_PHOTO,
                             ((BitmapDrawable) ((ImageView) v).getDrawable()).getBitmap());
-                        startActivity(i);
+                        ActivityOptionsCompat options = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(getActivity(), v, "shared");
+                        ((AppCompatActivity) getActivity()).startActivity(i, options.toBundle());
                     }
                 });
             }
