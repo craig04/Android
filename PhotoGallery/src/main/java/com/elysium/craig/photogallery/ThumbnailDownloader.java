@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -25,6 +26,8 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
     private Handler mResponseHandler;
     private Listener<Token> mListener;
 
+    private LruCache<String, Bitmap> mLRUCache;
+
     public interface Listener<Token> {
         void onThumbnailDownloaded(Token token, Bitmap thumbnail);
     }
@@ -34,8 +37,13 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
     }
 
     public ThumbnailDownloader(Handler responseHandler) {
+
         super(TAG);
         mResponseHandler = responseHandler;
+
+        int memory = (int) Runtime.getRuntime().maxMemory();
+        mLRUCache = new LruCache<>(memory / 15);
+        Log.d(TAG, "LRUCache memory usage: " + memory);
     }
 
     @Override
@@ -73,11 +81,16 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                 return;
             }
 
-            byte bitmapBytes[] = new FlickrFetchr().getUrlBytes(url);
-            final Bitmap bitmap = BitmapFactory
-                .decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+            Bitmap bitmap = mLRUCache.get(url);
+            if (bitmap == null) {
+                byte bitmapBytes[] = FlickrFetchr.getUrlBytes(url);
+                bitmap = BitmapFactory
+                    .decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                mLRUCache.put(url, bitmap);
+            }
             Log.i(TAG, "Bitmap created");
 
+            final Bitmap finalBitmap = bitmap;
             mResponseHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -85,7 +98,7 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                         return;
                     }
                     mRequestMap.remove(token);
-                    mListener.onThumbnailDownloaded(token, bitmap);
+                    mListener.onThumbnailDownloaded(token, finalBitmap);
                 }
             });
 

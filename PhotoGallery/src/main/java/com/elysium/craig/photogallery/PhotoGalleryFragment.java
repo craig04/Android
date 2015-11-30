@@ -85,7 +85,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         protected ArrayList<GalleryItem> doInBackground(Void... voids) {
-            return new FlickrFetchr().fetchItems();
+            return FlickrFetchr.fetchItems();
         }
 
         @Override
