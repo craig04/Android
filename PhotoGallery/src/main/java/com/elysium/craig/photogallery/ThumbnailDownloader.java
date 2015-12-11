@@ -63,13 +63,22 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
         };
     }
 
-    public void queueThumbnail(Token token, String url) {
+    public Bitmap queueThumbnail(Token token, String url) {
+
+        if (url == null) {
+            return null;
+        }
+
+        Bitmap bitmap = mLRUCache.get(url);
+        if (bitmap != null) {
+            return bitmap;
+        }
 
         Log.i(TAG, "Got an URL: " + url);
         mRequestMap.put((ImageView) token, url);
-
         mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
             .sendToTarget();
+        return null;
     }
 
     private void handleRequest(final Token token) {
@@ -81,16 +90,12 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                 return;
             }
 
-            Bitmap bitmap = mLRUCache.get(url);
-            if (bitmap == null) {
-                byte bitmapBytes[] = FlickrFetchr.getUrlBytes(url);
-                bitmap = BitmapFactory
-                    .decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                mLRUCache.put(url, bitmap);
-            }
+            byte bitmapBytes[] = FlickrFetchr.getUrlBytes(url);
+            final Bitmap bitmap = BitmapFactory
+                .decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             Log.i(TAG, "Bitmap created");
 
-            final Bitmap finalBitmap = bitmap;
+            mLRUCache.put(url, bitmap);
             mResponseHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -98,7 +103,7 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                         return;
                     }
                     mRequestMap.remove(token);
-                    mListener.onThumbnailDownloaded(token, finalBitmap);
+                    mListener.onThumbnailDownloaded(token, bitmap);
                 }
             });
 
